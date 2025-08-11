@@ -7,6 +7,13 @@ const coursesRouter = require('./routes/courses.route');
 const enrollmentsRouter = require('./routes/enrollment.route');
 const usersRouter = require('./routes/users.route');
 const authRouter = require('./routes/auth.route');
+
+require('dotenv').config();
+
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET is not set');
+}
+
 mongoose
   .connect('mongodb://localhost:27017/courses')
   .then(() => console.log('Connected to MongoDB...'))
