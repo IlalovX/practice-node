@@ -7,8 +7,12 @@ const coursesRouter = require('./routes/courses.route');
 const enrollmentsRouter = require('./routes/enrollment.route');
 const usersRouter = require('./routes/users.route');
 const authRouter = require('./routes/auth.route');
+const errorMiddleware = require('./middleware/error');
+const winston = require('winston');
 
 require('dotenv').config();
+
+winston.add(new winston.transports.File({ filename: 'logfile.log' }));
 
 if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET is not set');
@@ -33,12 +37,6 @@ app.use((req, res, next) => {
 });
 
 // Централизованный обработчик ошибок (Express 5 ловит async/await сам)
-app.use((err, req, res, next) => {
-  console.error(err);
-  const status = err.status || 500;
-  res.status(status).json({
-    message: err.message || 'Internal Server Error',
-  });
-});
+app.use(errorMiddleware);
 
 app.listen(5000, () => console.log('Listening on port 5000...'));
