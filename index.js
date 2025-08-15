@@ -7,10 +7,9 @@ const coursesRouter = require('./routes/courses.route');
 const enrollmentsRouter = require('./routes/enrollment.route');
 const usersRouter = require('./routes/users.route');
 const authRouter = require('./routes/auth.route');
-const errorMiddleware = require('./middleware/error');
+const errorMiddleware = require('./middleware/error.middleware');
 const winston = require('winston');
 require('winston-mongodb');
-
 require('dotenv').config();
 
 winston.add(new winston.transports.Console());
@@ -23,6 +22,21 @@ winston.add(
     level: 'info',
   })
 );
+
+winston.exceptions.handle(
+  new winston.transports.File({ filename: 'logs/uncaughtExceptions.log' })
+);
+process.on('uncaughtException', (ex) => {
+  winston.error('Uncaught Exception', ex, ex.message);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (ex) => {
+  throw ex;
+});
+
+const myPromise = new Promise.reject(new Error('This is a test error'));
+myPromise.then('end');
 
 if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET is not set');
