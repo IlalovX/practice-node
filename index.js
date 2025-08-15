@@ -9,10 +9,20 @@ const usersRouter = require('./routes/users.route');
 const authRouter = require('./routes/auth.route');
 const errorMiddleware = require('./middleware/error');
 const winston = require('winston');
+require('winston-mongodb');
 
 require('dotenv').config();
 
-winston.add(new winston.transports.File({ filename: 'logfile.log' }));
+winston.add(new winston.transports.Console());
+winston.add(
+  new winston.transports.File({ filename: 'logs/logfile.log', level: 'error' })
+);
+winston.add(
+  new winston.transports.MongoDB({
+    db: 'mongodb://localhost:27017/courses-logs',
+    level: 'info',
+  })
+);
 
 if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET is not set');
@@ -20,8 +30,8 @@ if (!process.env.JWT_SECRET) {
 
 mongoose
   .connect('mongodb://localhost:27017/courses')
-  .then(() => console.log('Connected to MongoDB...'))
-  .catch((err) => console.error('Could not connect to MongoDB...', err));
+  .then(() => winston.debug('Connected to MongoDB...'))
+  .catch((err) => winston.error('Could not connect to MongoDB...', err));
 
 app.use(express.json());
 app.use('/categories', categoriesRouter);
@@ -33,10 +43,11 @@ app.use('/auth', authRouter);
 
 // 404 для неизвестных маршрутов (до error handler’а)
 app.use((req, res, next) => {
+  winston.error('Not Found');
   res.status(404).json({ message: 'Not Found' });
 });
 
 // Централизованный обработчик ошибок (Express 5 ловит async/await сам)
 app.use(errorMiddleware);
 
-app.listen(5000, () => console.log('Listening on port 5000...'));
+app.listen(5000, () => winston.info('Listening on port 5000...'));

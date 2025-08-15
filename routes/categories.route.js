@@ -5,7 +5,7 @@ const auth = require('../middleware/auth.middleware');
 const admin = require('../middleware/admin.middleware');
 
 router.get('/', async (req, res) => {
-  // throw new Error('Could not get categories.');
+  throw new Error('Could not get categories.');
   const categories = await Category.find().sort('name');
   res.send(categories);
 });
