@@ -5,7 +5,7 @@
   "mode": "development",
   "scripts": {
     "start": "node index.js",
-    "test": "jest"
+    "test": "jest --watchAll"
   },
   "keywords": [],
   "author": "",
