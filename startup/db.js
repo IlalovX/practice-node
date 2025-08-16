@@ -3,6 +3,6 @@ const winston = require('winston');
 
 module.exports = function () {
   mongoose
-    .connect('mongodb://localhost:27017/courses')
+    .connect(process.env.MONGODB_URI)
     .then(() => winston.info('Connected to MongoDB...'));
 };

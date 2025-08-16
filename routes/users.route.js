@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Users, validateUser } = require('../models/users.model');
+const { Users, validateUsers } = require('../models/users/users.model');
 const _ = require('lodash');
 const bcrypt = require('bcrypt');
 const auth = require('../middleware/auth.middleware');
@@ -12,7 +12,7 @@ router.get('/me', auth, async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { error } = validateUser(req.body);
+  const { error } = validateUsers(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let user = await Users.findOne({ email: req.body.email });

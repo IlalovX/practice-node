@@ -10,4 +10,8 @@ require('./startup/db')();
 
 require('./startup/routes')(app);
 
-app.listen(5000, () => winston.info('Listening on port 5000...'));
+const server = app.listen(5000, () =>
+  winston.info('Listening on port 5000...')
+);
+
+module.exports = server;
