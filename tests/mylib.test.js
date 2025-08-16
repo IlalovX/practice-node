@@ -1,5 +1,5 @@
 const mylib = require('./mylib');
-
+const db = require('./db');
 describe('absolute', () => {
   it('should return a positive number if input is positive', () => {
     const result = mylib.absolute(1);
@@ -96,5 +96,27 @@ describe('fizzBuzz', () => {
   it('should return input if input is not divisible by 3 or 5', () => {
     const result = mylib.fizzBuzz(1);
     expect(result).toBe(1);
+  });
+});
+
+describe('applyDiscount', () => {
+  it('should apply 10% discount if customer has more than 100 points', () => {
+    db.getCustomer = function (customerId) {
+      console.log('Mocking customer...');
+      return { id: customerId, points: 101 };
+    };
+    const order = { customerId: 1, totalPrice: 100, price: 100 };
+    mylib.applyDiscount(order);
+    expect(order.totalPrice).toBe(90);
+  });
+
+  it('should not apply discount if customer has less than 100 points', () => {
+    db.getCustomer = function (customerId) {
+      console.log('Mocking customer...');
+      return { id: customerId, points: 10 };
+    };
+    const order = { customerId: 1, totalPrice: 100, price: 100 };
+    mylib.applyDiscount(order);
+    expect(order.totalPrice).toBe(100);
   });
 });

@@ -1,3 +1,5 @@
+const db = require('./db');
+
 module.exports.absolute = function (number) {
   return number >= 0 ? number : -number;
 };
@@ -26,4 +28,12 @@ module.exports.fizzBuzz = function (input) {
   if (input % 3 === 0) return 'Fizz';
   if (input % 5 === 0) return 'Buzz';
   return input;
+};
+
+// mock function
+module.exports.applyDiscount = function (order) {
+  const customer = db.getCustomer(order.customerId);
+  if (customer.points > 100) {
+    order.totalPrice = order.price - order.price * 0.1;
+  }
 };
